@@ -2,10 +2,12 @@
 HISTFILE="${HOME}/.zsh_history"
 HISTSIZE=1000000
 SAVEHIST=1000000
+export TERM=screen-256color
 export GOPATH="${HOME}/gopath"
-export PATH="${HOME}/.cargo/bin":"${GOPATH}/bin":"${HOME}/.local/bin":$PATH
+export PATH="{GOPATH}/bin:${HOME}/.local/bin:$PATH"
 export MANPAGER='nvim +Man!'
 export MANWIDTH=999
 export EDITOR=nvim
-export bastion="bastion02ch.ext.velocix.com"
-export LC_ALL=en_US.UTF-8
+export bastion="ActiveDirectoryResourceGroup-azure-az-common-1"
+export LC_ALL=C.UTF-8
+export LANG=C.UTF-8
