@@ -50,8 +50,8 @@ bindkey "^p" up-line-or-beginning-search # Up
 bindkey "^n" down-line-or-beginning-search # Down
 
 # FZF
-source /usr/share/doc/fzf/examples/completion.zsh 
-source /usr/share/doc/fzf/examples/key-bindings.zsh
+source "${HOME}/.fzf/shell/key-bindings.zsh"
+source "${HOME}/.fzf/shell/completion.zsh"
 # export FZF_DEFAULT_COMMAND='rg --hidden -l ""'
 
 # Edit line in vim with ctrl-e:
