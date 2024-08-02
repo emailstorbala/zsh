@@ -29,3 +29,8 @@ function zsh_add_completion() {
 	completion_file="$(basename "${completion_file_path}")"
 	if [ "$2" = true ] && compinit "${completion_file:1}"
 }
+
+function set_http_proxies() {
+    export http_proxy=http://localhost:3128
+    export https_proxy=http://localhost:3128
+}
