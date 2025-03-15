@@ -6,8 +6,12 @@ precmd() { vcs_info }
 
 # Define how unstaged (`%u`) and staged (`%c`) changes are displayed
 zstyle ':vcs_info:*' check-for-changes true
-zstyle ':vcs_info:*' unstagedstr '(✘)'   # Show this if there are unstaged changes
-zstyle ':vcs_info:*' stagedstr '(+)'     # Show this if there are staged changes
+zstyle ':vcs_info:*' get-untracked true
+
+# Define symbols for different Git states
+zstyle ':vcs_info:*' unstagedstr '(✘)'    # Unstaged changes
+zstyle ':vcs_info:*' stagedstr '(+)'      # Staged changes
+zstyle ':vcs_info:*' untrackedstr '?'     # Untracked files
 
 # Format: Show branch name, and only append status if non-empty
 zstyle ':vcs_info:*' formats '%b%u%c'
