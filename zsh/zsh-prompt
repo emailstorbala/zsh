@@ -16,4 +16,5 @@ zstyle ':vcs_info:*' actionformats '%b|%a%u%c'
 # Enable prompt substitution
 setopt PROMPT_SUBST
 
-source "${ZDOTDIR}/mysorin.zsh-theme"
+#PROMPT='%{$fg[cyan]%}%3c%{$fg[yellow]%}${vcs_info_msg_0_:+ $vcs_info_msg_0_} %(!.%{$fg_bold[red]%}#.%{$fg_bold[green]%}❯)%{$reset_color%} '
+PROMPT='%{$fg[cyan]%}%3c%{$fg[yellow]%}${vcs_info_msg_0_:+ $vcs_info_msg_0_} %(?.%{$fg_bold[green]%}❯.%{$fg_bold[red]%}❯%{$fg_bold[red]%}[%?])%{$reset_color%} '
