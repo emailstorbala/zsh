@@ -1,16 +1,19 @@
 #!/bin/sh
 
-## autoload vcs and colors
 autoload -Uz vcs_info
 autoload -U colors && colors
+precmd() { vcs_info }
 
-# enable only git 
-zstyle ':vcs_info:*' enable git 
+# Define how unstaged (`%u`) and staged (`%c`) changes are displayed
+zstyle ':vcs_info:*' check-for-changes true
+zstyle ':vcs_info:*' unstagedstr '(✘)'   # Show this if there are unstaged changes
+zstyle ':vcs_info:*' stagedstr '(+)'     # Show this if there are staged changes
 
-# setup a hook that runs before every ptompt. 
-precmd_vcs_info() { vcs_info }
-precmd_functions+=( precmd_vcs_info )
-setopt prompt_subst
+# Format: Show branch name, and only append status if non-empty
+zstyle ':vcs_info:*' formats '%b%u%c'
+zstyle ':vcs_info:*' actionformats '%b|%a%u%c'
 
-source "${ZDOTDIR}/git.zsh"
+# Enable prompt substitution
+setopt PROMPT_SUBST
+
 source "${ZDOTDIR}/mysorin.zsh-theme"
