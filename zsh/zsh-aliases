@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/zsh
 
 alias ls='ls --color=auto'
 alias dir='dir --color=auto'
