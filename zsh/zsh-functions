@@ -35,4 +35,6 @@ function zsh_add_completion() {
 function set_http_proxies() {
     export http_proxy=http://localhost:3128
     export https_proxy=http://localhost:3128
+    eval `ssh-agent`
+    ssh-add
 }

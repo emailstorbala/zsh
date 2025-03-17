@@ -4,6 +4,8 @@ autoload -Uz vcs_info
 autoload -U colors && colors
 precmd() { vcs_info }
 
+# Enable vcs_info for Git
+zstyle ':vcs_info:*' enable git
 # Define how unstaged (`%u`) and staged (`%c`) changes are displayed
 zstyle ':vcs_info:*' check-for-changes true
 zstyle ':vcs_info:*' get-untracked true
@@ -17,7 +19,12 @@ zstyle ':vcs_info:*' untrackedstr '?'     # Untracked files
 zstyle ':vcs_info:*' formats '%b%u%c'
 zstyle ':vcs_info:*' actionformats '%b|%a%u%c'
 
-# Enable prompt substitution
-setopt PROMPT_SUBST
+# Function to show exit status if last command failed
+function exit_status {
+  [[ $? -ne 0 ]] && echo "%F{red}✘%f "
+}
 
-PROMPT='%{$fg[cyan]%}%3c%{$fg[yellow]%}${vcs_info_msg_0_:+ $vcs_info_msg_0_} %(?.%{$fg_bold[green]%}❯.%{$fg_bold[red]%}❯%{$fg_bold[red]%}[%?])%{$reset_color%} '
+# Minimal prompt without extra spaces
+PROMPT='$(exit_status)%{$fg[cyan]%}%3c%{$fg[yellow]%}${vcs_info_msg_0_:+ $vcs_info_msg_0_} %(?.%{$fg_bold[green]%}❯.%{$fg_bold[red]%}❯%{$fg_bold[red]%}[%?])%{$reset_color%} '
+
+setopt PROMPT_SUBST
