@@ -15,6 +15,7 @@ alias devvm='ssh -o ServerAliveInterval=120 -L 0.0.0.0:3128:10.93.12.123:3128 -L
 alias connsocksproxy='ssh br@10.93.5.55 -D 1080'
 alias lr='ls -lrt --color=auto'
 alias zsh-update-plugins="find "$ZDOTDIR/plugins" -type d -exec test -e '{}/.git' ';' -print0 | xargs -I {} -0 git -C {} pull -q"
+alias gitlog='git log --graph --pretty=format:"%C(yellow)%h%C(reset) - %C(green)(%ad)%C(reset) %C(bold blue)<%an>%C(reset) %s %C(red)%d%C(reset)" --date=short'
 
 # get fastest mirrors
 alias mirror="sudo reflector -f 30 -l 30 --number 10 --verbose --save /etc/pacman.d/mirrorlist"

@@ -25,6 +25,6 @@ function exit_status {
 }
 
 # Minimal prompt without extra spaces
-PROMPT='$(exit_status)%{$fg[cyan]%}%3c%{$fg[yellow]%}${vcs_info_msg_0_:+ $vcs_info_msg_0_} %(?.%{$fg_bold[green]%}❯.%{$fg_bold[red]%}❯%{$fg_bold[red]%}[%?])%{$reset_color%} '
+PROMPT='$(exit_status)%{$fg[cyan]%}%3c%{$fg[yellow]%}${vcs_info_msg_0_:+ $vcs_info_msg_0_} %(?.%{$fg_bold[green]%}〉.%{$fg_bold[red]%}[%?] 〉%{$fg_bold[red]%})%{$reset_color%}'
 
 setopt PROMPT_SUBST
