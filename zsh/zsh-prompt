@@ -2,22 +2,32 @@
 
 autoload -Uz vcs_info
 autoload -U colors && colors
+
+# Add custom function to check for untracked files
++vi-git-untracked() {
+    if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) == 'true' ]] && \
+       git status --porcelain | grep -q '^?? '; then
+        hook_com[misc]+='(?)'
+    fi
+}
+
 precmd() { vcs_info }
 
 # Enable vcs_info for Git
 zstyle ':vcs_info:*' enable git
 # Define how unstaged (`%u`) and staged (`%c`) changes are displayed
 zstyle ':vcs_info:*' check-for-changes true
-zstyle ':vcs_info:*' get-untracked true
 
 # Define symbols for different Git states
 zstyle ':vcs_info:*' unstagedstr '(✘)'    # Unstaged changes
 zstyle ':vcs_info:*' stagedstr '(+)'      # Staged changes
-zstyle ':vcs_info:*' untrackedstr '?'     # Untracked files
 
-# Format: Show branch name, and only append status if non-empty
-zstyle ':vcs_info:*' formats '%b%u%c'
-zstyle ':vcs_info:*' actionformats '%b|%a%u%c'
+# Register the custom hook for untracked files
+zstyle ':vcs_info:git*+set-message:*' hooks git-untracked
+
+# Format: Show branch name, status indicators, and misc (for untracked)
+zstyle ':vcs_info:*' formats '%b%u%c%m'
+zstyle ':vcs_info:*' actionformats '%b|%a%u%c%m'
 
 # Function to show exit status if last command failed
 function exit_status {
