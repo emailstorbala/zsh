@@ -1,0 +1,125 @@
+Since you're using Wayland with PipeWire 1.4.2, the configuration approach is different from the ALSA/PulseAudio setup I mentioned earlier. Here's how to configure Dolby Digital passthrough
+with PipeWire:
+
+## PipeWire Configuration
+
+Create or edit ~/.config/pipewire/pipewire.conf.d/99-dolby-passthrough.conf:
+
+context.properties = {
+    default.clock.rate = 48000
+    default.clock.allowed-rates = [ 44100 48000 96000 ]
+}
+
+context.modules = [
+    {   name = libpipewire-module-adapter
+        args = {
+            factory.name     = support.null-audio-sink
+            node.name        = "hdmi-passthrough"
+            node.description = "HDMI Dolby Digital Passthrough"
+            media.class      = "Audio/Sink"
+            audio.format     = "S16LE"
+            audio.rate       = 48000
+            audio.channels   = 6
+            audio.position   = [ FL FR FC LFE RL RR ]
+        }
+    }
+]
+
+
+bash
+pw-cli list-objects | grep -A 10 -B 5 "node.name.*hdmi"
+
+
+Or use:
+bash
+wpctl status
+
+
+## Configure MPV for PipeWire
+
+Edit ~/.config/mpv/mpv.conf:
+
+audio-device=pipewire
+audio-spdif=ac3,dts
+audio-format=s16
+audio-channels=5.1
+audio-exclusive=yes
+
+
+You can also specify the exact PipeWire device:
+bash
+# List PipeWire audio devices
+mpv --audio-device=help
+
+# Then use the specific HDMI device
+mpv --audio-device=pipewire/alsa_output.pci-0000_00_1f.3.hdmi-stereo --audio-spdif=ac3 your_movie.mkv
+
+Create ~/.config/pipewire/pipewire-pulse.conf.d/99-hdmi-passthrough.conf:
+
+pulse.properties = {
+    pulse.min.req = 1024/48000
+    pulse.default.req = 1024/48000
+    pulse.max.req = 1024/48000
+    pulse.min.quantum = 1024/48000
+    pulse.max.quantum = 1024/48000
+}
+
+stream.properties = {
+    node.latency = 1024/48000
+    resample.quality = 1
+}
+
+## Set Default Audio Device
+
+bash
+# List audio sinks
+wpctl status
+
+# Set your HDMI output as default (replace XX with actual ID)
+wpctl set-default XX
+
+
+## Enable Passthrough Mode
+
+For direct bitstream passthrough, you may need to use WirePlumber configuration. Create ~/.config/wireplumber/main.lua.d/99-hdmi-passthrough.lua:
+
+lua
+rule = {
+  matches = {
+    {
+      { "node.name", "matches", "alsa_output.pci-*hdmi*" },
+    },
+  },
+  apply_properties = {
+    ["audio.format"] = "S16LE",
+    ["audio.rate"] = 48000,
+    ["api.alsa.period-size"] = 1024,
+    ["api.alsa.headroom"] = 0,
+    ["session.suspend-timeout-seconds"] = 0,
+  },
+}
+
+table.insert(alsa_monitor.rules, rule)
+
+## Restart PipeWire Services
+
+bash
+systemctl --user restart pipewire pipewire-pulse wireplumber
+
+
+## Browser Configuration
+
+For browsers with PipeWire, ensure you're using the latest versions that support PipeWire properly. Firefox should automatically use PipeWire on Wayland.
+
+## Verify Setup
+
+bash
+# Check PipeWire graph
+pw-top
+
+# Monitor audio streams
+pw-mon
+
+
+The key difference with PipeWire is that it handles the audio routing differently than PulseAudio, and the passthrough configuration needs to be set at the PipeWire level rather than
+application level.
