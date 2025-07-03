@@ -123,3 +123,122 @@ pw-mon
 
 The key difference with PipeWire is that it handles the audio routing differently than PulseAudio, and the passthrough configuration needs to be set at the PipeWire level rather than
 application level.
+
+---------------------------- Second iteration tuning -----------------------------------------
+
+bash
+# Check available ALSA devices
+aplay -l
+
+# Test direct ALSA output with MPV
+mpv --audio-device=alsa/hdmi:CARD=0,DEV=3 --audio-spdif=ac3,dts --audio-channels=5.1 your_movie.mkv
+
+
+## Force Raw Bitstream with PipeWire
+
+Create ~/.config/pipewire/pipewire.conf.d/50-bitstream.conf:
+
+context.properties = {
+    default.clock.rate = 48000
+}
+
+context.objects = [
+    {
+        factory = adapter
+        args = {
+            factory.name           = support.null-audio-sink
+            node.name              = "bitstream-sink"
+            node.description       = "Bitstream Passthrough Sink"
+            media.class            = "Audio/Sink"
+            audio.format           = "S16LE"
+            audio.rate             = 48000
+            audio.channels         = 2
+            audio.position         = [ FL FR ]
+            monitor.channel-volumes = false
+            channelmix.disable     = true
+            channelmix.mix-lfe     = false
+            resample.disable       = true
+        }
+    }
+]
+
+## WirePlumber Configuration for Passthrough
+
+Create ~/.config/wireplumber/wireplumber.conf.d/99-disable-dsp.conf:
+
+monitor.alsa.rules = [
+  {
+    matches = [
+      {
+        node.name = "~alsa_output.*hdmi.*"
+      }
+    ]
+    actions = {
+      update-props = {
+        api.alsa.disable-mmap = true
+        api.alsa.use-acp = false
+        audio.format = "S16LE"
+        audio.rate = 48000
+        audio.channels = 2
+        audio.position = "FL,FR"
+        channelmix.disable = true
+        resample.disable = true
+      }
+    }
+  }
+]
+
+## MPV Configuration for Raw Passthrough
+
+Update ~/.config/mpv/mpv.conf:
+
+# Force ALSA direct output
+audio-device=alsa
+ao=alsa
+audio-spdif=ac3,dts,eac3
+audio-format=s16
+audio-channels=stereo
+audio-exclusive=yes
+
+# Disable any audio processing
+af=""
+audio-normalize-downmix=no
+audio-pitch-correction=no
+
+
+## Test with Specific Commands
+
+Try these MPV commands to test different approaches:
+
+bash
+# Method 1: Direct ALSA with forced AC3
+mpv --ao=alsa --audio-device=alsa/hdmi:CARD=0,DEV=3 --audio-spdif=ac3 --audio-channels=stereo your_movie.mkv
+
+# Method 2: Force 2-channel output (required for AC3 passthrough)
+mpv --audio-channels=stereo --audio-spdif=ac3,dts --audio-format=s16 your_movie.mkv
+
+# Method 3: Completely bypass PipeWire
+PIPEWIRE_RUNTIME_DIR=/dev/null mpv --ao=alsa --audio-device=alsa/hdmi:CARD=0,DEV=3 --audio-spdif=ac3 your_movie.mkv
+
+## Check HDMI Audio Capabilities
+
+bash
+# Check if your HDMI supports compressed audio
+cat /proc/asound/card*/eld#*
+
+# Check current audio format being sent
+cat /proc/asound/card*/pcm*/sub*/hw_params
+
+
+## Key Points for AC3 Passthrough
+
+1. 2-channel output: AC3 passthrough typically requires stereo (2-channel) output, not 5.1 PCM
+2. Disable audio processing: Any DSP, mixing, or resampling will convert AC3 to PCM
+3. Direct hardware access: Sometimes PipeWire's abstraction layer interferes with bitstream
+
+## Restart Audio Services
+
+After making changes:
+
+bash
+systemctl --user restart pipewire pipewire-pulse wireplumber

@@ -11,7 +11,7 @@ alias egrep='egrep --color=auto'
 alias vi='vim'
 alias highlighter='/home/br/MyTools/highlight-pointer/highlight-pointer -r 5 -o 6'
 alias starthttp='python3 -m http.server 9000'
-alias devvm='ssh -o ServerAliveInterval=120 -L 0.0.0.0:3128:10.93.12.123:3128 -L 0.0.0.0:1339:10.93.12.23:1339 br@10.93.5.55 -D 1080'
+alias devvm='ssh -o ServerAliveInterval=120 -L 0.0.0.0:3128:10.93.12.123:3128 br@10.93.5.55 -D 1080'
 alias connsocksproxy='ssh br@10.93.5.55 -D 1080'
 alias lr='ls -lrt --color=auto'
 alias zsh-update-plugins="find "$ZDOTDIR/plugins" -type d -exec test -e '{}/.git' ';' -print0 | xargs -I {} -0 git -C {} pull -q"
