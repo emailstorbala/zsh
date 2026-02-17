@@ -32,9 +32,13 @@ function zsh_add_completion() {
 	if [ "$2" = true ] && compinit "${completion_file:1}"
 }
 
+function add_ssh_key(){
+    eval `ssh-agent`
+    ssh-add
+}
+
 function set_http_proxies() {
     export http_proxy=http://localhost:3128
     export https_proxy=http://localhost:3128
-    eval `ssh-agent`
-    ssh-add
+    add_ssh_key
 }
