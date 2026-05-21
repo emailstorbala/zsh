@@ -2,7 +2,7 @@
 HISTFILE="${HOME}/.zsh_history"
 HISTSIZE=1000000
 SAVEHIST=1000000
-export TERM=screen-256color
+export TERM=tmux-256color
 export GOPATH="${HOME}/gopath"
 export PATH="${GOPATH}/bin:${HOME}/.cargo/bin:${HOME}/bin:${HOME}/.local/bin:$PATH"
 export MANPAGER='nvim +Man!'
